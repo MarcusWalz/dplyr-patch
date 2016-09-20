@@ -1,0 +1,43 @@
+---
+title: "dplyr patch"
+output: html_document
+---
+
+A simple dpylr verb that pushes changes onto an existing tibble.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tibble)
+library(dplyr)
+library(dplyrPatch)
+library(lazyeval)
+```
+
+### Patch by key
+
+```{r patch}
+mtcars2 <- rownames_to_column(mtcars, "model") %>%
+  head(3) %>% select(model, mpg, cyl, hp, drat, wt)
+
+mtcars2
+
+patches <- frame_data(
+  ~ model, ~ mpg, ~ cyl, ~ wt,
+  "Mazda RX4", 500, NA, 200,
+  "Datsun 710", NA, 8, NA
+)
+
+patches
+
+mtcars2 %>% patch(patches, by="model")
+
+
+```
+
+### Patch only `cyl`
+
+```{r patch2}
+
+mtcars2 %>% patch(patches, cyl, by="model")
+
+```

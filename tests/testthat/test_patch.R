@@ -13,6 +13,7 @@ patches <- frame_data(
 )
 
 test_that("patch passes a simple test", {
+  print("test's are working")
   mtcars3 <- mtcars2 %>% patch(patches, by="model")
 
 
