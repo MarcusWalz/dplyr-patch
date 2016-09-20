@@ -5,6 +5,12 @@
 require(dplyr)
 require(lazyeval)
 
+#' patch if there as a non-NA value present in patch
+if_present <- function(new_val, old_val) { if_else(is.na(new_val), old_val, new_val) }
+
+#' patch only on NA values
+if_missing <- function(new_val, old_val) { if_else(is.na(old_val), new_val, old_val) }
+
 #' patch a tibble
 #'
 #' @param data
@@ -17,14 +23,14 @@ require(lazyeval)
 #' @export
 #'
 #' @examples
-patch <- function(data, patch_data, ..., by = NULL, patch_fun=coalesce) {
+patch <- function(data, patch_data, ..., by = NULL, patch_fun=if_present) {
   patch_cols <- unname(dplyr::select_vars(colnames(data), ...))
   if(length(patch_cols) == 0) patch_cols <- NULL
 
-  patch_(data, patch_data, patch_cols, by, na_only, patch_fun)
+  patch_(data, patch_data, patch_cols, by, patch_fun)
 }
 
-patch_ <- function(data, patch_data, patch_cols = NULL, by = NULL, ppatch_fun=coalesce) {
+patch_ <- function(data, patch_data, patch_cols = NULL, by = NULL, patch_fun=coalesce) {
   if(is.null(by)) {
     error("`by` must be specified")
   }
@@ -35,7 +41,7 @@ patch_ <- function(data, patch_data, patch_cols = NULL, by = NULL, ppatch_fun=co
   # If patch_cols is unspecified, patch using the intersection instead.
   if(is.null(patch_cols)) {
     patch_cols <- common_cols %>% setdiff(by)
-    # TODO fire off a warning
+    message("Patching, Columns = ", utils::capture.output(dput(by)))
   }
 
   # No missing columns
@@ -49,7 +55,7 @@ patch_ <- function(data, patch_data, patch_cols = NULL, by = NULL, ppatch_fun=co
   if( length(patch_cols) == 0 ) {
     warning("No rows in y to patch onto x")
     return(data)
-  }
+ }
 
   # Can not join by a patching column
   if( length(intersect(by, patch_cols)) != 0 ) {
@@ -87,3 +93,5 @@ patch_ <- function(data, patch_data, patch_cols = NULL, by = NULL, ppatch_fun=co
 
   joined %>% transmute_(.dots=expr)
 }
+
+

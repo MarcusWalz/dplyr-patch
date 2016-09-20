@@ -40,5 +40,5 @@ test_that("patch only works on selected columns when specified", {
 
  expect_equal(rx4$mpg, rx4_orig$mpg)
  expect_equal(rx4$wt,  200)
-})
 
+})

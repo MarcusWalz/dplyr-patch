@@ -1,9 +1,9 @@
-Package: dplyr-patch
+Package: dplyrPatch
 Type: Package
 Title: dplyr-patch
 Version: 0.1.0
 Author: Marcus Walz
-Maintainer: MarcusEvanWalz@gmail.com
+Maintainer: Marcus Walz <marcusevanwalz@gmail.com>
 Description: patch verb for tibbles
 License: What license is it under?
 LazyData: TRUE
